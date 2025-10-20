@@ -29,9 +29,9 @@ class GRUModel(nn.Module):
     gru : nn.GRU
         The GRU module used for sequence modeling.
     """
-    
+
     def __init__(self, input_size: int, hidden_size: int, num_layers: int, dropout: float) -> None:
-        super().__init__()
+        super(GRUModel, self).__init__()
         self.hidden_size: int = hidden_size
         self.num_layers: int = num_layers
         self.gru: nn.GRU = nn.GRU(input_size, hidden_size, num_layers, dropout=dropout, batch_first=True)
