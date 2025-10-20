@@ -33,7 +33,7 @@ class Trainer:
     def __init__(self, model: nn.Module, optimizer: torch.optim.Optimizer, loss_fn: nn.Module, device: torch.device) -> None:
         self.model: nn.Module = model
         self.optimizer: torch.optim.Optimizer = optimizer
-        self.loss_fn: nn.Module
+        self.loss_fn: nn.Module = loss_fn
         self.device: torch.device = device
 
         self.model.to(self.device)
