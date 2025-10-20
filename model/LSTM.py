@@ -17,8 +17,6 @@ class LSTMModel(nn.Module):
         Number of neurons in the hidden state.
     num_layers : int
         Number of recurrent layers (stacked LSTMs).
-    output_size : int
-        Number of output features.
     dropout : float
         Dropout probability between LSTM layers.
 
@@ -32,11 +30,11 @@ class LSTMModel(nn.Module):
         The LSTM module used for sequence modeling.
     """
 
-    def __init__(self, input_size: int, hidden_size: int, num_layers: int, output_size: int, dropout: float) -> None:
+    def __init__(self, input_size: int, hidden_size: int, num_layers: int, dropout: float) -> None:
         super(LSTMModel, self).__init__()
         self.hidden_size: int = hidden_size
         self.num_layers: int = num_layers
-        self.lstm: nn.LSTM = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.lstm: nn.LSTM = nn.LSTM(input_size, hidden_size, num_layers, dropout=dropout, batch_first=True)
 
     def forward(self, x: torch.Tensor, 
                 h0: torch.Tensor | None = None, 
