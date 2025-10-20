@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from LSTM import LSTMModel
-from GRU import GRUModel
+from model.LSTMLayer import LSTMLayer
+from model.GRULayer import GRULayer
 
 np.random.seed(0)
 torch.manual_seed(0)
@@ -48,8 +48,8 @@ class MultiBranchModel(nn.Module):
                  dropout: dict[str, int], 
                  output_size: int) -> None:
         super(MultiBranchModel).__init__()
-        self.lstm: LSTMModel = LSTMModel(input_size, hidden_size['lstm'], num_layers['lstm'], dropout['lstm'])
-        self.gru: GRUModel = GRUModel(input_size, hidden_size['gru'], num_layers['gru'], dropout['gru'])
+        self.lstm: LSTMLayer = LSTMLayer(input_size, hidden_size['lstm'], num_layers['lstm'], dropout['lstm'])
+        self.gru: GRULayer = GRULayer(input_size, hidden_size['gru'], num_layers['gru'], dropout['gru'])
         self.linear = nn.Linear(hidden_size['lstm'] + hidden_size['gru'], output_size)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:

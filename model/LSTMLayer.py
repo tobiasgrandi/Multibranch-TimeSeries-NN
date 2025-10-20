@@ -5,7 +5,7 @@ import numpy as np
 np.random.seed(0)
 torch.manual_seed(0)
 
-class LSTMModel(nn.Module):
+class LSTMLayer(nn.Module):
     """
     LSTM model for sequence processing.
 
@@ -31,7 +31,7 @@ class LSTMModel(nn.Module):
     """
 
     def __init__(self, input_size: int, hidden_size: int, num_layers: int, dropout: float) -> None:
-        super(LSTMModel, self).__init__()
+        super(LSTMLayer, self).__init__()
         self.hidden_size: int = hidden_size
         self.num_layers: int = num_layers
         self.lstm: nn.LSTM = nn.LSTM(input_size, hidden_size, num_layers, dropout=dropout, batch_first=True)
