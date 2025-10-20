@@ -66,8 +66,8 @@ class LSTMModel(nn.Module):
             of shape (num_layers, batch_size, hidden_size).
         """
                 
-        batch_size = x.size(0)
-        device = x.device
+        batch_size: int = x.size(0)
+        device: torch.device = x.device
         hidden_state: torch.Tensor = h0 if h0 is not None else torch.zeros(self.num_layers, batch_size, self.hidden_size).to(device)
         cell_state: torch.Tensor = c0 if c0 is not None else torch.zeros(self.num_layers, batch_size, self.hidden_size).to(device)
 
