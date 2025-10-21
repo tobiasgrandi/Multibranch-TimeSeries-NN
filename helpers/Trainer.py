@@ -2,6 +2,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+from helpers.EarlyStopping import EarlyStopping
 
 class Trainer:
     """
@@ -30,11 +31,16 @@ class Trainer:
         The computation device used during training and validation.
     """
 
-    def __init__(self, model: nn.Module, optimizer: torch.optim.Optimizer, loss_fn: nn.Module, device: torch.device) -> None:
+    def __init__(self, model: nn.Module, 
+                 optimizer: torch.optim.Optimizer, 
+                 loss_fn: nn.Module, 
+                 device: torch.device, 
+                 early_stopping: EarlyStopping) -> None:
         self.model: nn.Module = model
         self.optimizer: torch.optim.Optimizer = optimizer
         self.loss_fn: nn.Module = loss_fn
         self.device: torch.device = device
+        self.early_stopping: EarlyStopping = early_stopping
 
         self.model.to(self.device)
 
@@ -56,7 +62,7 @@ class Trainer:
         self.model.train()
         total_loss: float = 0.0
 
-        for X_batch, y_batch in tqdm(dataloader, desc='Training', leave=False):
+        for X_batch, y_batch in tqdm(dataloader, desc='Training', leave=False, mininterval=1.0, bar_format='{l_bar}{bar} {n_fmt}/{total_fmt}'):
 
             X_batch: torch.Tensor = X_batch.to(self.device)
             y_batch: torch.Tensor = y_batch.to(self.device)
@@ -101,7 +107,7 @@ class Trainer:
 
         return total_loss / len(dataloader)
     
-    def fit(self, train_loader: DataLoader, val_loader: DataLoader, epochs: int) -> None:
+    def fit(self, train_loader: DataLoader, val_loader: DataLoader, epochs: int) -> tuple[list[float], list[float]]:
         """
         Trains the model for a specified number of epochs, optionally evaluating on a validation set.
 
@@ -116,13 +122,30 @@ class Trainer:
 
         Returns
         -------
-        None
-            This method does not return a value; it trains the model in place.
+        tuple[list[float], list[float]]
+            A tuple containing:
+            - List of training losses
+            - List of validation losses
         """
+
+        train_losses: list[float] = []
+        val_losses: list[float] = []
                 
+        print('Starting training.')
         for epoch in range(epochs):
             train_loss: float = self.train_epoch(train_loader)
             val_loss: float = self.validate_epoch(val_loader)
 
+
             if epoch % 10 == 0:
                 print(f'Epoch [{epoch+1}/{epochs}] | Training Loss: {train_loss:.4f} | Validation Loss: {val_loss:.4f}')
+
+            self.early_stopping(val_loss, self.model)
+
+            train_losses.append(train_loss)
+            val_losses.append(val_loss)
+
+            if self.early_stopping.early_stop:
+                break
+        
+        return train_losses, val_losses
