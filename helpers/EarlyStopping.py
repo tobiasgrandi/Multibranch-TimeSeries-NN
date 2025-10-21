@@ -72,7 +72,7 @@ class EarlyStopping:
                 print(f'Validation loss improved to {val_loss:.4f}')
         else:
             self.counter += 1
-            if self.verbose:
+            if self.verbose and (self.counter % 5 == 0 or self.counter == 1):
                 print(f'No improvement in validation loss [{self.counter}/{self.patience}]')
             if self.counter >= self.patience:
                 self.early_stop = True
