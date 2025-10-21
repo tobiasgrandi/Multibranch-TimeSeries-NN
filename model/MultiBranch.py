@@ -47,7 +47,7 @@ class MultiBranchModel(nn.Module):
                  num_layers: dict[str, int], 
                  dropout: dict[str, int], 
                  output_size: int) -> None:
-        super(MultiBranchModel).__init__()
+        super(MultiBranchModel, self).__init__()
         self.lstm: LSTMLayer = LSTMLayer(input_size, hidden_size['lstm'], num_layers['lstm'], dropout['lstm'])
         self.gru: GRULayer = GRULayer(input_size, hidden_size['gru'], num_layers['gru'], dropout['gru'])
         self.linear = nn.Linear(hidden_size['lstm'] + hidden_size['gru'], output_size)
