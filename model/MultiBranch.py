@@ -72,7 +72,7 @@ class MultiBranchModel(nn.Module):
             the predicted values for each sequence in the batch.
         """
 
-        _, (hn_lstm, _) = self.lstm(x)
+        _, hn_lstm, _ = self.lstm(x)
 
         lstm_out = hn_lstm[-1]
 
