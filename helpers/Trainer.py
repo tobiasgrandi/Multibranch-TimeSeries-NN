@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from EarlyStopping import EarlyStopping
+from helpers.EarlyStopping import EarlyStopping
 
 class Trainer:
     """
