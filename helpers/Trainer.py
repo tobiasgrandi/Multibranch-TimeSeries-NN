@@ -107,7 +107,7 @@ class Trainer:
 
         return total_loss / len(dataloader)
     
-    def fit(self, train_loader: DataLoader, val_loader: DataLoader, epochs: int) -> None:
+    def fit(self, train_loader: DataLoader, val_loader: DataLoader, epochs: int) -> tuple[list[float], list[float]]:
         """
         Trains the model for a specified number of epochs, optionally evaluating on a validation set.
 
@@ -122,18 +122,29 @@ class Trainer:
 
         Returns
         -------
-        None
-            This method does not return a value; it trains the model in place.
+        tuple[list[float], list[float]]
+            A tuple containing:
+            - List of training losses
+            - List of validation losses
         """
+
+        train_losses: list[float] = []
+        val_losses: list[float] = []
                 
         for epoch in range(epochs):
             train_loss: float = self.train_epoch(train_loader)
             val_loss: float = self.validate_epoch(val_loader)
+
 
             if epoch % 10 == 0:
                 print(f'Epoch [{epoch+1}/{epochs}] | Training Loss: {train_loss:.4f} | Validation Loss: {val_loss:.4f}')
 
             self.early_stopping(val_loss, self.model)
 
+            train_losses.append(train_loss)
+            val_losses.append(val_loss)
+
             if self.early_stopping.early_stop:
                 break
+        
+        return train_losses, val_losses
