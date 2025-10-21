@@ -62,7 +62,7 @@ class Trainer:
         self.model.train()
         total_loss: float = 0.0
 
-        for X_batch, y_batch in tqdm(dataloader, desc='Training', leave=False):
+        for X_batch, y_batch in tqdm(dataloader, desc='Training', leave=False, mininterval=1.0, bar_format='{l_bar}{bar} {n_fmt}/{total_fmt}'):
 
             X_batch: torch.Tensor = X_batch.to(self.device)
             y_batch: torch.Tensor = y_batch.to(self.device)
@@ -131,6 +131,7 @@ class Trainer:
         train_losses: list[float] = []
         val_losses: list[float] = []
                 
+        print('Starting training.')
         for epoch in range(epochs):
             train_loss: float = self.train_epoch(train_loader)
             val_loss: float = self.validate_epoch(val_loader)
