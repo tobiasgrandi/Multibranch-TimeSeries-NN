@@ -54,7 +54,7 @@ class YoutubeDataset(Dataset):
                 targets.append(y_seq) 
 
         self.sequences: torch.Tensor = torch.tensor(np.array(sequences), dtype=torch.float32)
-        self.targets: torch.Tensor = torch.tensor(np.array(targets), dtype=torch.float32).unsqueeze(1)
+        self.targets: torch.Tensor = torch.tensor(np.array(targets), dtype=torch.float32)
 
     def __len__(self) -> int:
         """
