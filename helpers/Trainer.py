@@ -66,7 +66,7 @@ class Trainer:
 
             X_batch: torch.Tensor = X_batch.to(self.device)
             y_batch: torch.Tensor = y_batch.to(self.device)
-
+            
             y_pred = self.model(X_batch)
             loss = self.loss_fn(y_pred.squeeze(), y_batch.float())
 

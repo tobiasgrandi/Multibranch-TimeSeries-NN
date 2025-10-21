@@ -49,9 +49,10 @@ class YoutubeDataset(Dataset):
 
             for i in range(len(group) - seq_len - forecast_horizon + 1):
                 x_seq: np.ndarray = X[i:i+seq_len]
-                y_seq: np.ndarray = y[i+seq_len+forecast_horizon-1]
+                y_seq: np.ndarray = y[i + seq_len: i+seq_len+forecast_horizon]
                 sequences.append(x_seq)
                 targets.append(y_seq) 
+        print(group[features])
 
         self.sequences: torch.Tensor = torch.tensor(np.array(sequences), dtype=torch.float32)
         self.targets: torch.Tensor = torch.tensor(np.array(targets), dtype=torch.float32)
