@@ -2,6 +2,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+from EarlyStopping import EarlyStopping
 
 class Trainer:
     """
@@ -30,11 +31,16 @@ class Trainer:
         The computation device used during training and validation.
     """
 
-    def __init__(self, model: nn.Module, optimizer: torch.optim.Optimizer, loss_fn: nn.Module, device: torch.device) -> None:
+    def __init__(self, model: nn.Module, 
+                 optimizer: torch.optim.Optimizer, 
+                 loss_fn: nn.Module, 
+                 device: torch.device, 
+                 early_stopping: EarlyStopping) -> None:
         self.model: nn.Module = model
         self.optimizer: torch.optim.Optimizer = optimizer
         self.loss_fn: nn.Module = loss_fn
         self.device: torch.device = device
+        self.early_stopping: EarlyStopping = early_stopping
 
         self.model.to(self.device)
 
@@ -126,3 +132,8 @@ class Trainer:
 
             if epoch % 10 == 0:
                 print(f'Epoch [{epoch+1}/{epochs}] | Training Loss: {train_loss:.4f} | Validation Loss: {val_loss:.4f}')
+
+            self.early_stopping(val_loss, self.model)
+
+            if self.early_stopping.early_stop:
+                break
