@@ -7,7 +7,7 @@ torch.manual_seed(0)
 
 class GRULayer(nn.Module):
     """
-    GRU model for sequence processing.
+    GRU layer for sequence processing.
 
     Parameters
     ----------
@@ -38,30 +38,30 @@ class GRULayer(nn.Module):
 
     def forward(self, x: torch.Tensor, 
                     h0: torch.Tensor | None = None) -> tuple[torch.Tensor, torch.Tensor]:
-            """
-            Perform a forward pass through the GRU network.
+        """
+        Perform a forward pass through the GRU layer.
 
-            Parameters
-            ----------
-            x : torch.Tensor
-                Input tensor of shape (batch_size, seq_len, input_size).
-            h0 : torch.Tensor | None, optional
-                Initial hidden state of shape (num_layers, batch_size, hidden_size).
-                If None, a zero tensor is used.
+        Parameters
+        ----------
+        x : torch.Tensor
+            Input tensor of shape (batch_size, seq_len, input_size).
+        h0 : torch.Tensor | None, optional
+            Initial hidden state of shape (num_layers, batch_size, hidden_size).
+            If None, a zero tensor is used.
 
-            Returns
-            -------
-            out : torch.Tensor
-                Output features from the LSTM for each time step, 
-                of shape (batch_size, seq_len, hidden_size).
-            hn : torch.Tensor
-                Hidden state for the last time step,
-                of shape (num_layers, batch_size, hidden_size).
-            """
-                    
-            batch_size: int = x.size(0)
-            device: torch.device = x.device
-            hidden_state: torch.Tensor = h0 if h0 is not None else torch.zeros(self.num_layers, batch_size, self.hidden_size).to(device)
-        
-            out, hn = self.gru(x, hidden_state)
-            return out, hn
+        Returns
+        -------
+        out : torch.Tensor
+            Output features from the LSTM for each time step, 
+            of shape (batch_size, seq_len, hidden_size).
+        hn : torch.Tensor
+            Hidden state for the last time step,
+            of shape (num_layers, batch_size, hidden_size).
+        """
+                
+        batch_size: int = x.size(0)
+        device: torch.device = x.device
+        hidden_state: torch.Tensor = h0 if h0 is not None else torch.zeros(self.num_layers, batch_size, self.hidden_size).to(device)
+    
+        out, hn = self.gru(x, hidden_state)
+        return out, hn
