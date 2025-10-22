@@ -45,7 +45,7 @@ class MultiBranchModel(nn.Module):
     def __init__(self, input_size: int, 
                  hidden_size: dict[str, int], 
                  num_layers: dict[str, int], 
-                 dropout: dict[str, int], 
+                 dropout: dict[str, float], 
                  output_size: int) -> None:
         super(MultiBranchModel, self).__init__()
         self.lstm: LSTMLayer = LSTMLayer(input_size, hidden_size['lstm'], num_layers['lstm'], dropout['lstm'])
