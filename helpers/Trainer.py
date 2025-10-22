@@ -64,13 +64,14 @@ class Trainer:
 
         for X_batch, y_batch in tqdm(dataloader, desc='Training', leave=False, mininterval=1.0, bar_format='{l_bar}{bar} {n_fmt}/{total_fmt}'):
 
+            self.optimizer.zero_grad()
+
             X_batch: torch.Tensor = X_batch.to(self.device)
             y_batch: torch.Tensor = y_batch.to(self.device)
             
-            y_pred = self.model(X_batch)
-            loss = self.loss_fn(y_pred.squeeze(), y_batch.float())
+            y_pred: torch.Tensor = self.model(X_batch)
+            loss: torch.Tensor = self.loss_fn(y_pred, y_batch.float())
 
-            self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
 
@@ -101,8 +102,8 @@ class Trainer:
                 X_batch: torch.Tensor = X_batch.to(self.device)
                 y_batch: torch.Tensor = y_batch.to(self.device)
 
-                y_pred = self.model(X_batch)
-                loss = self.loss_fn(y_pred.squeeze(), y_batch.float())
+                y_pred: torch.Tensor = self.model(X_batch)
+                loss: torch.Tensor = self.loss_fn(y_pred, y_batch.float())
                 total_loss += loss.item()
 
         return total_loss / len(dataloader)
@@ -137,8 +138,7 @@ class Trainer:
             val_loss: float = self.validate_epoch(val_loader)
 
 
-            if epoch % 10 == 0:
-                print(f'Epoch [{epoch+1}/{epochs}] | Training Loss: {train_loss:.4f} | Validation Loss: {val_loss:.4f}')
+            print(f'Epoch [{epoch+1}/{epochs}] | Training Loss: {train_loss:.4f} | Validation Loss: {val_loss:.4f}')
 
             self.early_stopping(val_loss, self.model)
 
