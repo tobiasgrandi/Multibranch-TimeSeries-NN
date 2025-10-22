@@ -31,7 +31,8 @@ class YoutubeDataset(Dataset):
         Tensor containing all input sequences with shape
         (num_sequences, seq_len, num_features).
     targets : torch.Tensor
-        Tensor containing all target values with shape (num_sequences, 1).
+        Tensor containing all target values with shape 
+        (num_sequences, forecast_horizon).
     """
 
     def __init__(self, df: pd.DataFrame, features: list[str], target: str, seq_len: int, forecast_horizon: int) -> None:
@@ -44,22 +45,23 @@ class YoutubeDataset(Dataset):
 
         for video_id, group in grouped:
             group = group.sort_values('timestamp')
-            X: np.ndarray = np.asarray(group[features].values)
-            y: np.ndarray = np.asarray(group[target].values)
+            X: np.ndarray = group[features].to_numpy()
+            y: np.ndarray = group[target].to_numpy()
 
             for i in range(len(group) - seq_len - forecast_horizon + 1):
                 x_seq: np.ndarray = X[i:i+seq_len]
                 y_seq: np.ndarray = y[i + seq_len: i+seq_len+forecast_horizon]
                 sequences.append(x_seq)
                 targets.append(y_seq) 
-        print(group[features])
 
         self.sequences: torch.Tensor = torch.tensor(np.array(sequences), dtype=torch.float32)
         self.targets: torch.Tensor = torch.tensor(np.array(targets), dtype=torch.float32)
 
     def __len__(self) -> int:
         """
-        Returns the total number of samples in the dataset.
+        Returns
+        ----------
+            Total number of samples in the dataset.
         """
         return len(self.sequences)
     
@@ -77,6 +79,6 @@ class YoutubeDataset(Dataset):
         tuple[torch.Tensor, torch.Tensor]
             A tuple containing:
             - Input tensor of shape (seq_len, num_features)
-            - Target tensor of shape (1,)
+            - Target tensor of shape (forecast_horizon)
         """
         return self.sequences[index], self.targets[index]
