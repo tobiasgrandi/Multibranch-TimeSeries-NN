@@ -72,13 +72,13 @@ class MultiBranchModel(nn.Module):
             the predicted values for each sequence in the batch.
         """
 
-        _, hn_lstm, _ = self.lstm(x)
+        out_lstm, hn_lstm, _ = self.lstm(x)
         
-        lstm_out = hn_lstm[-1]
+        lstm_out = out_lstm[:, -1, :]
 
-        _, hn_gru = self.gru(x)
+        out_gru, hn_gru = self.gru(x)
 
-        gru_out = hn_gru[-1]
+        gru_out = out_gru[:, -1, :]
 
         combined = torch.cat((lstm_out, gru_out), dim=1)
 
