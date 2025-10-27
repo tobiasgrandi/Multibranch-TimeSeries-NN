@@ -33,7 +33,7 @@ The project is implemented using **PyTorch** and leverages a YouTube dataset con
 This project uses **UV** and requires Python >= 3.10. You can install the dependencies with:
 
 ```
-uv install
+uv sync
 ```
 
 ## Usage
