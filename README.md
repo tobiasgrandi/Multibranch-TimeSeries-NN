@@ -73,8 +73,8 @@ The project produces:
 * `metrics.png`: Comparative metrics (Loss, MSE, MAE, RMSE, R2).
 * `results.csv`: Tabular comparison of model predictions vs actual values.
 
-![Loss](/src/results/loss.png)
-![Metrics](/src/results/metrics.png)
+![Loss](/src/results/[1, 2, 3]_loss.png)
+![Metrics](/src/results/[1, 2, 3]_metrics.png)
 
 > **Observation**
 >
