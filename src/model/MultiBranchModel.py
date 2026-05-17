@@ -72,11 +72,16 @@ class MultiBranchModel(nn.Module):
             the predicted values for each sequence in the batch.
         """
 
-        out_lstm, hn_lstm, _ = self.lstm(x)
+        stream1 = torch.cuda.Stream()
+        stream2 = torch.cuda.Stream()
+
+        with torch.cuda.stream(stream1):
+            out_lstm, hn_lstm, _ = self.lstm(x)
         
         lstm_out = out_lstm[:, -1, :]
 
-        out_gru, hn_gru = self.gru(x)
+        with torch.cuda.stream(stream2):
+            out_gru, hn_gru = self.gru(x)
 
         gru_out = out_gru[:, -1, :]
 

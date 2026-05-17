@@ -3,6 +3,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from helpers.EarlyStopping import EarlyStopping
+import time
 
 class Trainer:
     """
@@ -62,7 +63,7 @@ class Trainer:
         self.model.train()
         total_loss: float = 0.0
 
-        for X_batch, y_batch in tqdm(dataloader, desc='Training', leave=False, mininterval=1.0, bar_format='{l_bar}{bar} {n_fmt}/{total_fmt}'):
+        for X_batch, y_batch in dataloader:
 
             self.optimizer.zero_grad()
 
@@ -108,7 +109,7 @@ class Trainer:
 
         return total_loss / len(dataloader)
     
-    def fit(self, train_loader: DataLoader, val_loader: DataLoader, epochs: int) -> tuple[list[float], list[float]]:
+    def fit(self, train_loader: DataLoader, val_loader: DataLoader, epochs: int) -> tuple[list[float], list[float], float]:
         """
         Trains the model for a specified number of epochs, optionally evaluating on a validation set.
 
@@ -131,12 +132,15 @@ class Trainer:
 
         train_losses: list[float] = []
         val_losses: list[float] = []
+        start_time = torch.cuda.Event(enable_timing=True)
+        end_time = torch.cuda.Event(enable_timing=True)
+        start_time.record(torch.cuda.current_stream())
                 
         print('Starting training.')
         for epoch in range(epochs):
+
             train_loss: float = self.train_epoch(train_loader)
             val_loss: float = self.validate_epoch(val_loader)
-
 
             print(f'Epoch [{epoch+1}/{epochs}] | Training Loss: {train_loss:.4f} | Validation Loss: {val_loss:.4f}')
 
@@ -147,5 +151,9 @@ class Trainer:
 
             if self.early_stopping.early_stop:
                 break
-        
-        return train_losses, val_losses
+
+        end_time.record(torch.cuda.current_stream())
+        total_time = start_time.elapsed_time(end_time) / 1000
+        print(f'Total training time: {total_time:.2f}s')
+
+        return train_losses, val_losses, total_time
